@@ -1,0 +1,15 @@
+services:
+  tracer:
+    #build: .
+    image: apavanello/terraform-tracer:latest
+    container_name: terraform-tracer
+    ports:
+      - "9999:9999"
+    volumes:
+      # Mount the examples mapping for dev testing.
+      # Users can override this to mount their own terraform code:
+      # - /path/to/my/terraform:/workspace/my-project
+      - ./examples:/workspace:ro
+    # The default command maps to the /workspace directory that's mounted
+    command: [ "start", "/workspace/advanced-looping", "--port", "9999" ]
+    restart: unless-stopped

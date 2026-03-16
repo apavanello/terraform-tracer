@@ -1,0 +1,619 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --primary: #a30eff;
+  --primary-hover: #8b0bd9;
+  --primary-light: rgba(163, 14, 255, 0.08);
+  --primary-glow: rgba(163, 14, 255, 0.25);
+
+  --bg-app: #f4f5f7;
+  --bg-surface: rgba(255, 255, 255, 0.88);
+  --bg-white: #ffffff;
+
+  --text-primary: #1f2937;
+  --text-secondary: #4b5563;
+  --text-muted: #9ca3af;
+
+  --border-color: rgba(229, 231, 235, 0.6);
+  --border-active: var(--primary);
+
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.08);
+  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.08);
+  --shadow-glass: 0 8px 32px 0 rgba(31, 38, 135, 0.06);
+
+  --env-prod: #ef4444;
+  --env-stg: #f59e0b;
+  --env-dev: #10b981;
+
+  --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Dark Mode ───────────────────────────────────────────── */
+html.dark {
+  --primary: #b44dff;
+  --primary-hover: #c77dff;
+  --primary-light: rgba(180, 77, 255, 0.12);
+  --primary-glow: rgba(180, 77, 255, 0.3);
+
+  --bg-app: #0f1117;
+  --bg-surface: rgba(22, 24, 35, 0.92);
+  --bg-white: #1a1c2a;
+
+  --text-primary: #e2e8f0;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+
+  --border-color: rgba(51, 65, 85, 0.5);
+
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.2);
+  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.3);
+  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.3);
+  --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+}
+
+html.dark .main-content {
+  background: radial-gradient(ellipse at 50% 30%, #1a1c2a 0%, #0f1117 70%);
+}
+
+html.dark .loading-overlay {
+  background: rgba(15, 17, 23, 0.85);
+}
+
+html.dark .btn-icon:hover {
+  background: rgba(255,255,255,0.08);
+}
+
+html.dark .tree-label:hover {
+  background: rgba(255,255,255,0.04);
+}
+
+html.dark .search-box input {
+  color: var(--text-primary);
+}
+
+/* ── Dark Mode Toggle ────────────────────────────────────── */
+.theme-toggle {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  border-radius: 12px;
+  background: #e2e8f0;
+  border: none;
+  cursor: pointer;
+  transition: background var(--transition);
+  padding: 0;
+  flex-shrink: 0;
+}
+
+html.dark .theme-toggle {
+  background: #334155;
+}
+
+.theme-toggle .toggle-knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  transition: transform var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+html.dark .theme-toggle .toggle-knob {
+  transform: translateX(20px);
+  background: #1e293b;
+}
+
+.toggle-knob svg {
+  width: 12px;
+  height: 12px;
+  color: #f59e0b;
+}
+
+html.dark .toggle-knob svg {
+  color: #93c5fd;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #app {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: var(--bg-app);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.app-container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  position: relative;
+}
+
+/* ── Buttons ─────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  font-size: 0.8125rem;
+  cursor: pointer;
+  transition: all var(--transition);
+  border: none;
+  outline: none;
+  user-select: none;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary) 0%, #7c3aed 100%);
+  color: white;
+  box-shadow: 0 2px 8px var(--primary-glow);
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px var(--primary-glow);
+}
+
+.btn-icon {
+  background: transparent;
+  color: var(--text-secondary);
+  padding: 6px;
+  border-radius: var(--radius-sm);
+}
+
+.btn-icon:hover {
+  background: rgba(0,0,0,0.05);
+  color: var(--text-primary);
+}
+
+/* ── Sidebar Left ────────────────────────────────────────── */
+.sidebar-left {
+  width: 260px;
+  height: 100%;
+  background: var(--bg-surface);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+}
+
+.sidebar-header {
+  padding: 20px 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 1.125rem;
+  color: var(--primary);
+}
+
+.logo svg {
+  width: 22px;
+  height: 22px;
+}
+
+.search-box {
+  margin: 0 16px 12px;
+  position: relative;
+}
+
+.search-box svg {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  width: 16px;
+  height: 16px;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 8px 10px 8px 32px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: var(--bg-white);
+  font-size: 0.8125rem;
+  outline: none;
+  transition: border-color var(--transition);
+  font-family: inherit;
+}
+
+.search-box input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+/* ── File Tree ───────────────────────────────────────────── */
+.file-tree {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 8px 16px;
+}
+
+.tree-item {
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+  user-select: none;
+}
+
+.tree-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 8px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.tree-label:hover {
+  background: rgba(0,0,0,0.03);
+}
+
+.tree-label.active {
+  background: var(--primary-light);
+  color: var(--primary);
+  font-weight: 500;
+}
+
+.tree-children {
+  padding-left: 16px;
+  border-left: 1px dashed var(--border-color);
+  margin-left: 14px;
+}
+
+.tree-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+/* ── Main Content ────────────────────────────────────────── */
+.main-content {
+  flex: 1;
+  position: relative;
+  background: radial-gradient(ellipse at 50% 30%, #ffffff 0%, var(--bg-app) 70%);
+}
+
+.top-bar {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  right: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 5;
+  background: var(--bg-surface);
+  backdrop-filter: blur(8px);
+  padding: 10px 18px;
+  border-radius: 40px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-color);
+}
+
+.stats {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+.stats strong {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.actions {
+  display: flex;
+  gap: 4px;
+}
+
+#network-container {
+  width: 100%;
+  height: 100%;
+  outline: none;
+}
+
+/* ── Loading Overlay ─────────────────────────────────────── */
+.loading-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(4px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+}
+
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid rgba(163, 14, 255, 0.15);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 12px;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.loading-overlay p {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+/* ── Right Sidebar (Props) ───────────────────────────────── */
+.sidebar-right {
+  width: 320px;
+  height: 100%;
+  background: var(--bg-surface);
+  backdrop-filter: blur(16px);
+  border-left: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+  flex-shrink: 0;
+}
+
+.panel-inner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.panel-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.panel-empty p {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  max-width: 200px;
+}
+
+.props-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.props-header h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.props-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+.info-card {
+  background: var(--bg-white);
+  padding: 12px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+  margin-bottom: 16px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8125rem;
+  padding: 4px 0;
+}
+
+.info-row .label { color: var(--text-muted); }
+.info-row .value { font-weight: 500; }
+
+/* ── Tabs ────────────────────────────────────────────────── */
+.tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 12px;
+}
+
+.tab {
+  padding: 6px 14px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  border-bottom: 2px solid transparent;
+  transition: all var(--transition);
+  font-family: inherit;
+}
+
+.tab.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+
+.tab:hover:not(.active) {
+  color: var(--text-secondary);
+}
+
+/* ── Environment Cards ───────────────────────────────────── */
+.env-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.env-item {
+  background: var(--bg-white);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 10px;
+}
+
+.env-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.env-badge {
+  font-size: 0.625rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 10px;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.env-badge.prod { background: var(--env-prod); }
+.env-badge.stg { background: var(--env-stg); }
+.env-badge.dev { background: var(--env-dev); }
+.env-badge.default { background: var(--text-muted); }
+
+.env-file {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-family: 'SF Mono', 'Fira Code', monospace;
+}
+
+.env-vars {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.var-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  padding: 3px 6px;
+  background: var(--bg-app);
+  border-radius: 4px;
+}
+
+.var-item span { color: var(--text-secondary); }
+.var-item code { color: var(--primary); font-weight: 600; }
+
+/* ── Code Block ──────────────────────────────────────────── */
+.code-block {
+  background: #1a1a2e;
+  color: #e2e8f0;
+  padding: 14px;
+  border-radius: var(--radius-md);
+  font-size: 0.75rem;
+  overflow-x: auto;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* ── Error State ─────────────────────────────────────────── */
+.error-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--env-prod);
+  font-size: 0.875rem;
+}
+
+/* ── Graph Empty Prompt ──────────────────────────────────── */
+.graph-prompt {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  pointer-events: none;
+}
+
+.graph-prompt p {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  text-align: center;
+  max-width: 260px;
+}
+
+/* ── Clear Focus Button ──────────────────────────────────── */
+.btn-clear {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all var(--transition);
+  font-family: inherit;
+}
+
+.btn-clear:hover {
+  background: rgba(239, 68, 68, 0.08);
+  color: var(--env-prod);
+  border-color: var(--env-prod);
+}
+
+/* ── Tree Empty State ────────────────────────────────────── */
+.tree-empty {
+  padding: 16px;
+  text-align: center;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+.tree-file-label {
+  opacity: 0.6;
+  font-size: 0.75rem;
+}

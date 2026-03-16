@@ -1,0 +1,30 @@
+# Go
+/tracer
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Vue / Bun
+ui/node_modules/
+ui/dist/
+ui/.vite/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test binary and coverage
+*.test
+*.out
+coverage.html
+
+# Env files
+.env.local
+.env.*.local

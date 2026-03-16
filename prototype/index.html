@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terraform Tracer</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Vis Network (Grafo) -->
+    <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    <!-- Tabler Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Esquerda -->
+        <aside class="sidebar left-sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="ti ti-box-model"></i>
+                    <span>Tf Tracer</span>
+                </div>
+                <button class="btn btn-primary btn-load">
+                    <i class="ti ti-folder-open"></i> Carregar Pasta
+                </button>
+            </div>
+            
+            <div class="search-box">
+                <i class="ti ti-search"></i>
+                <input type="text" placeholder="Buscar recursos...">
+            </div>
+
+            <div class="file-tree">
+                <div class="tree-item folder open">
+                    <div class="tree-item-label">
+                        <i class="ti ti-folder"></i> <span>infrastructure</span>
+                    </div>
+                    <div class="tree-children">
+                        <div class="tree-item file">
+                            <i class="ti ti-file-code"></i> <span>main.tf</span>
+                        </div>
+                        <div class="tree-item file">
+                            <i class="ti ti-file-code"></i> <span>variables.tf</span>
+                        </div>
+                        <div class="tree-item folder open">
+                            <div class="tree-item-label">
+                                <i class="ti ti-folder"></i> <span>modules</span>
+                            </div>
+                            <div class="tree-children">
+                                <div class="tree-item file">
+                                    <i class="ti ti-file-code"></i> <span>vpc.tf</span>
+                                </div>
+                                <div class="tree-item file active">
+                                    <i class="ti ti-file-code"></i> <span>rds.tf</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Área Principal (Grafo) -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="breadcrumbs">
+                    <span>infrastructure</span> > <span>modules</span> > <span class="highlight">rds.tf</span>
+                </div>
+                <div class="actions">
+                    <button class="btn btn-icon"><i class="ti ti-filter"></i></button>
+                    <button class="btn btn-icon" id="btn-fit"><i class="ti ti-maximize"></i></button>
+                </div>
+            </div>
+            
+            <div id="network-container"></div>
+            
+            <div class="loading-overlay" id="loading-overlay">
+                <div class="spinner"></div>
+                <p>Analisando dependências...</p>
+            </div>
+        </main>
+
+        <!-- Sidebar Direita (Propriedades) -->
+        <aside class="sidebar right-sidebar closed" id="props-sidebar">
+            <div class="props-header">
+                <h3 id="prop-title">Recurso</h3>
+                <button class="btn btn-icon" id="btn-close-props"><i class="ti ti-x"></i></button>
+            </div>
+            <div class="props-content">
+                <div class="info-card">
+                    <div class="info-row">
+                        <span class="label">Tipo:</span>
+                        <span class="value" id="prop-type">aws_db_instance</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Módulo:</span>
+                        <span class="value" id="prop-module">rds</span>
+                    </div>
+                </div>
+
+                <div class="tabs">
+                    <button class="tab active" data-target="tab-envs">Environments</button>
+                    <button class="tab" data-target="tab-code">Código</button>
+                </div>
+
+                <div class="tab-content active" id="tab-envs">
+                    <div class="env-list">
+                        <div class="env-item prod">
+                            <div class="env-header">
+                                <span class="env-badge prod">PROD</span>
+                                <span class="env-file">prod.tfvars</span>
+                            </div>
+                            <div class="env-vars">
+                                <div class="var-item"><span>instance_class</span><code>db.r5.large</code></div>
+                                <div class="var-item"><span>allocated_storage</span><code>500</code></div>
+                            </div>
+                        </div>
+                        <div class="env-item stg">
+                            <div class="env-header">
+                                <span class="env-badge stg">STG</span>
+                                <span class="env-file">stg.tfvars</span>
+                            </div>
+                            <div class="env-vars">
+                                <div class="var-item"><span>instance_class</span><code>db.t3.medium</code></div>
+                                <div class="var-item"><span>allocated_storage</span><code>100</code></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="tab-code">
+                    <pre class="code-block"><code id="prop-code"></code></pre>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <script src="./js/app.js"></script>
+</body>
+</html>
