@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/apavanello/terraform-tracer/internal/gitclone"
 	"github.com/apavanello/terraform-tracer/internal/models"
 	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/hclsyntax"
@@ -14,6 +15,13 @@ import (
 
 // Parse reads all .tf and .tfvars files from the given directory and returns a Graph.
 func Parse(rootDir string) (*models.Graph, error) {
+	// Create a temp cache dir for git clones
+	cacheDir, err := os.MkdirTemp("", "terraform-tracer-modules-*")
+	if err != nil {
+		return nil, fmt.Errorf("failed to create module cache dir: %w", err)
+	}
+	defer os.RemoveAll(cacheDir)
+
 	graph := &models.Graph{
 		Nodes:        []models.Node{},
 		Edges:        []models.Edge{},
@@ -22,24 +30,33 @@ func Parse(rootDir string) (*models.Graph, error) {
 		Files:        []string{},
 	}
 
-	// Collect all .tf files
-	tfFiles, err := collectFiles(rootDir, ".tf")
-	if err != nil {
-		return nil, fmt.Errorf("failed to collect .tf files: %w", err)
+	if err := parseDir(rootDir, rootDir, cacheDir, graph); err != nil {
+		return nil, err
 	}
-	graph.Files = tfFiles
+
+	return graph, nil
+}
+
+// parseDir collects and parses all .tf and .tfvars files in a directory.
+func parseDir(dir string, rootDir string, cacheDir string, graph *models.Graph) error {
+	// Collect all .tf files
+	tfFiles, err := collectFiles(dir, ".tf")
+	if err != nil {
+		return fmt.Errorf("failed to collect .tf files: %w", err)
+	}
+	graph.Files = append(graph.Files, tfFiles...)
 
 	// Parse each .tf file
 	for _, filePath := range tfFiles {
-		if err := parseTFFile(filePath, rootDir, graph); err != nil {
+		if err := parseTFFile(filePath, rootDir, cacheDir, graph); err != nil {
 			fmt.Fprintf(os.Stderr, "warning: failed to parse %s: %v\n", filePath, err)
 		}
 	}
 
 	// Collect and parse .tfvars files for environments
-	tfvarsFiles, err := collectFiles(rootDir, ".tfvars")
+	tfvarsFiles, err := collectFiles(dir, ".tfvars")
 	if err != nil {
-		return nil, fmt.Errorf("failed to collect .tfvars files: %w", err)
+		return fmt.Errorf("failed to collect .tfvars files: %w", err)
 	}
 	for _, filePath := range tfvarsFiles {
 		if err := parseTFVarsFile(filePath, rootDir, graph); err != nil {
@@ -47,7 +64,7 @@ func Parse(rootDir string) (*models.Graph, error) {
 		}
 	}
 
-	return graph, nil
+	return nil
 }
 
 func collectFiles(rootDir string, ext string) ([]string, error) {
@@ -69,7 +86,7 @@ func collectFiles(rootDir string, ext string) ([]string, error) {
 	return files, err
 }
 
-func parseTFFile(filePath string, rootDir string, graph *models.Graph) error {
+func parseTFFile(filePath string, rootDir string, cacheDir string, graph *models.Graph) error {
 	src, err := os.ReadFile(filePath)
 	if err != nil {
 		return err
@@ -139,6 +156,19 @@ func parseTFFile(filePath string, rootDir string, graph *models.Graph) error {
 				}
 				graph.Nodes = append(graph.Nodes, node)
 				extractEdges(block, node.ID, graph)
+
+				// If the module source is a git repository, clone and parse it
+				if source, ok := props["source"]; ok && gitclone.IsGitSource(source) {
+					localPath, err := gitclone.CloneModule(source, cacheDir)
+					if err != nil {
+						fmt.Fprintf(os.Stderr, "warning: failed to clone module %s: %v\n", source, err)
+					} else {
+						// Recursively parse the cloned module
+						if err := parseDir(localPath, rootDir, cacheDir, graph); err != nil {
+							fmt.Fprintf(os.Stderr, "warning: failed to parse cloned module %s: %v\n", source, err)
+						}
+					}
+				}
 			}
 
 		case "variable":

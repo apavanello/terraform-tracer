@@ -25,7 +25,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o tracer ./cmd/tracer
 # Stage 3: Minimal runner
 FROM alpine:latest
 WORKDIR /app
-RUN apk --no-cache add ca-certificates tzdata
+RUN apk --no-cache add ca-certificates tzdata git
 COPY --from=go-builder /app/tracer /tracer
 ENTRYPOINT ["/tracer"]
 CMD ["start", "/workspace", "--port", "9999"]

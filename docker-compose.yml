@@ -11,5 +11,5 @@ services:
       # - /path/to/my/terraform:/workspace/my-project
       - ./examples:/workspace:ro
     # The default command maps to the /workspace directory that's mounted
-    command: [ "start", "/workspace/advanced-looping", "--port", "9999" ]
+    command: [ "start", "/workspace/git-module", "--port", "9999" ]
     restart: unless-stopped
